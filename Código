@@ -1,0 +1,282 @@
+Gui: InsertClient.java
+
+package exemplo10;
+
+import java.awt.BorderLayout;
+
+
+public class InsertClient extends JFrame
+{
+	//elementos grÃ¡ficos da GUI
+	private JPanel contentPane;
+	private JLabel lblNome;
+	private JLabel lblCc;
+	private JLabel lblContacto;
+	private JLabel lblArrayListObjects;
+	private JTextField tfNome;
+	private JTextField tfCc;
+	private JTextField tfContacto;
+	private JButton btnGravar;
+	private JButton btnLimpar;
+	private JButton btnGravarFicheiro;
+	private JButton btnLerFicheiro;
+	private static JList fileList;
+	private static JList arrayList;
+
+	//elementos programÃ¡ticos
+	private static ArrayList<Membro> guestList = new ArrayList<Membro>();
+	private static File ficheiro = new File("Membrosdaguest.txt");
+	
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					InsertClient frame = new InsertClient();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public InsertClient()
+	{
+		setTitle("GuestList");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 672, 390);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		lblNome = new JLabel("Nome:");
+		lblNome.setBounds(22, 11, 93, 14);
+		contentPane.add(lblNome);
+		
+		tfNome = new JTextField();
+		tfNome.setBounds(125, 8, 150, 20);
+		lblNome.setLabelFor(tfNome);
+		contentPane.add(tfNome);
+		tfNome.setColumns(10);
+		
+		btnGravar = new JButton("Gravar");
+		btnGravar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//cria o objeto client de acordo com a classe
+				Membro client = new Membro();
+				client.setCc(Integer.parseInt(tfCc.getText()));
+				client.setNome(tfNome.getText());
+				client.setContacto(Integer.parseInt(tfContacto.getText()));
+				guestList.add(client);
+				
+				//atualiza a lista de objetos do array
+				atualizaArrayList();
+			}
+		});
+		btnGravar.setBounds(26, 138, 89, 23);
+		contentPane.add(btnGravar);
+		
+		lblCc = new JLabel("Cart\u00E3o Cidad\u00E3o:");
+		lblCc.setBounds(22, 36, 93, 14);
+		contentPane.add(lblCc);
+		
+		tfCc = new JTextField();
+		tfCc.setBounds(125, 33, 150, 20);
+		contentPane.add(tfCc);
+		tfCc.setColumns(10);
+		
+		lblContacto = new JLabel("Contacto:");
+		lblContacto.setBounds(22, 61, 93, 14);
+		contentPane.add(lblContacto);
+		
+		tfContacto = new JTextField();
+		tfContacto.setBounds(125, 58, 150, 20);
+		contentPane.add(tfContacto);
+		tfContacto.setColumns(10);
+		
+		fileList = new JList();
+		fileList.setBounds(340, 194, 288, 125);
+		contentPane.add(fileList);
+		
+		btnLimpar = new JButton("Limpar");
+		btnLimpar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tfNome.setText("");
+				tfCc.setText("");
+				tfContacto.setText("");
+			}
+		});
+		btnLimpar.setBounds(125, 138, 89, 23);
+		contentPane.add(btnLimpar);
+		
+		btnGravarFicheiro = new JButton("Gravar Ficheiro");
+		btnGravarFicheiro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Boolean s = gravaguestList(guestList);
+				
+				if (s == true) {
+					atualizaFileList();
+					atualizaArrayList();
+					JOptionPane.showMessageDialog(null, "Membros do array list inseridos com sucesso no ficheiro!");
+				}
+			}
+		});
+		btnGravarFicheiro.setBounds(142, 274, 119, 23);
+		contentPane.add(btnGravarFicheiro);
+		
+		btnLerFicheiro = new JButton("Ler Ficheiro");
+		btnLerFicheiro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Boolean s = lerguestList();
+				
+				if (s == true) {
+					atualizaFileList();
+					atualizaArrayList();
+					JOptionPane.showMessageDialog(null, "Membros obtidos com sucesso do ficheiro! (NÂº de Membros: " + guestList.size() + ")");
+				}
+			}
+		});
+		btnLerFicheiro.setBounds(22, 274, 119, 23);
+		contentPane.add(btnLerFicheiro);
+		
+		JLabel lblFileListObjects = new JLabel("Lista de objetos armazenados no ficheiro externo:");
+		lblFileListObjects.setVerticalAlignment(SwingConstants.TOP);
+		lblFileListObjects.setBounds(340, 172, 288, 14);
+		contentPane.add(lblFileListObjects);
+		
+		lblArrayListObjects = new JLabel("Lista de objetos armazenados no ArrayList interno:");
+		lblArrayListObjects.setVerticalAlignment(SwingConstants.TOP);
+		lblArrayListObjects.setBounds(340, 11, 288, 14);
+		contentPane.add(lblArrayListObjects);
+		
+		arrayList = new JList();
+		arrayList.setBounds(340, 36, 288, 125);
+		contentPane.add(arrayList);
+		
+	/*	JButton btnAtualizar = new JButton("Atualizar");
+		btnAtualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				atualizaArrayList();
+			}
+		});
+		btnAtualizar.setBounds(385, 304, 155, 25);
+		contentPane.add(btnAtualizar);*/
+	}
+	
+	public static void atualizaArrayList()
+	{
+		try {
+			//modelo de lista para a JList
+			DefaultListModel<String> listModel = new DefaultListModel<String>();
+			for (Membro obj:guestList) {
+				listModel.addElement(obj.getNome() + ", CC: " + obj.getCc() + ", Contacto: " + obj.getContacto());
+			}
+			arrayList.setModel(listModel);
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null,"Erro ao atualizar array list!", "Erro na AplicaÃ§Ã£o", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static void atualizaFileList()
+	{
+		try {
+			//modelo de lista para a JList
+			DefaultListModel<String> listModel = new DefaultListModel<String>();
+			for (Membro obj:guestList) {
+				listModel.addElement(obj.getNome() + " (BI: " + obj.getCc() + ")");
+			}
+			fileList.setModel(listModel);
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null,"Erro ao atualizar array list!", "Erro na AplicaÃ§Ã£o", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public static Boolean gravaguestList(ArrayList<Membro> _guestList)
+	{
+		Boolean sucesso = false;
+		
+		try {
+			
+			ficheiro.delete();
+			
+			if (ficheiro.exists()==false) {
+				FileOutputStream file = new FileOutputStream(ficheiro,true);
+				ObjectOutputStream oos = new ObjectOutputStream(file);
+				oos.writeObject(_guestList);
+				oos.close();
+				sucesso = true;
+			} else {
+				JOptionPane.showMessageDialog(null,"Erro ao gravar Membros no ficheiro!", "Erro na AplicaÃ§Ã£o", JOptionPane.ERROR_MESSAGE);
+			}
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null,"Erro ao gravar Membros no ficheiro!", "Erro na AplicaÃ§Ã£o", JOptionPane.ERROR_MESSAGE);
+		}
+		return sucesso;
+	}
+	
+	public static Boolean lerguestList()
+	{
+		Boolean sucesso = false;
+		try
+		{
+			FileInputStream file = new FileInputStream(ficheiro);
+			ObjectInputStream ois = new ObjectInputStream(file);
+			guestList = (ArrayList<Membro>) ois.readObject();
+			ois.close();
+			sucesso = true;
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null,"Erro ao ler Membros do ficheiro!", "Erro na AplicaÃ§Ã£o", JOptionPane.ERROR_MESSAGE);
+		}
+		return sucesso;
+	}
+}
+
+--------------------------------------------------------------
+
+APP: 
+
+
+public class Membro {
+
+	private int cc, contacto;
+	private String nome; 
+	
+	public Membro() {
+		this.cc = 0;
+		this.contacto = 0;
+		this.nome = null;
+		
+	}
+	
+	//Metodos set e get
+	public void setCc (int _cc) {
+		this.cc = _cc;
+	}
+	public int getCc() {
+		return this.cc;
+	}
+	
+	public void setContacto (int _contacto) {
+		this.contacto = _contacto;
+	}
+	public int getContacto() {
+		return this.contacto;
+	}
+	
+	public void setNome (String _nome) {
+		this.nome = _nome;
+	}
+	public String getNome() {
+		return this.nome;
+	}
+	
+	
+}
