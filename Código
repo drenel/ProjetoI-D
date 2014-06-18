@@ -72,9 +72,9 @@ public class InsertClient extends JFrame
 			public void actionPerformed(ActionEvent e) {
 				//cria o objeto client de acordo com a classe
 				Membro client = new Membro();
-				client.setCc(Integer.parseInt(tfCc.getText()));
-				client.setNome(tfNome.getText());
-				client.setContacto(Integer.parseInt(tfContacto.getText()));
+				client.setCc(Integer.parseInt(tfCc.getText().toString()));
+				client.setNome(tfNome.getText().toString());
+				client.setContacto(Integer.parseInt(tfContacto.getText().toString()));
 				guestList.add(client);
 				
 				//atualiza a lista de objetos do array
