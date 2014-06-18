@@ -239,7 +239,7 @@ public class InsertClient extends JFrame
 	}
 }
 
---------------------------------------------------------------
+---------------------------------------------------------------------------
 
 APP: 
 
@@ -279,4 +279,54 @@ public class Membro {
 	}
 	
 	
+}
+
+
+---------------------------------------------------------------------------
+
+
+Primeiro exemplo
+
+Codigo:
+
+import java.util.ArrayList;
+
+public class ExemploArrayList {
+	
+    public static void main(String[] args){
+            ArrayList<String> compras = new ArrayList<String> ();
+            
+            compras.add("Maça");
+            System.out.print( "Produto adicionado: " );
+            System.out.println(compras.get(0).toString());
+            
+            compras.add("Pão");
+            System.out.print( "Produto adicionado: " );
+            System.out.println(compras.get(1).toString());
+            
+            compras.add("Massa");
+            System.out.print( "Produto adicionado: " );
+            System.out.println(compras.get(2).toString());
+            
+            System.out.print( "Que produto está na posição 0: " );
+            System.out.println(compras.get(0) );
+            
+            System.out.print( "Em que posição está o produto 'Massa': " );
+            System.out.println(compras.indexOf("Massa"));
+            
+            System.out.print( "Adicionar Abacaxi onde estava a Maça: " );
+            compras.add(compras.indexOf("Maça"), "Abacaxi");
+            System.out.println(compras.toString());
+            
+            System.out.print( "Número de produtos na lista: " );
+            System.out.println( compras.size() );
+            
+            System.out.print( "Remover a 'Massa' da lista: " );
+            compras.remove("Massa");
+            System.out.println(compras.toString());
+            
+            System.out.print( "Remover os produtos todos: " );
+            compras.clear();
+            System.out.println(compras.toString());
+        }
 }
